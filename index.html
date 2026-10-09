@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#020817">
+<title>Seni Çok Seviyorum, Balım ❤️</title>
+
+<style>
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  min-height: 100vh;
+  min-height: 100dvh;
+  color: #f0f6ff;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  background:
+    radial-gradient(ellipse at 50% 43%, rgba(23,69,139,.48), transparent 48%),
+    radial-gradient(ellipse at 50% 100%, rgba(0,90,220,.16), transparent 48%),
+    linear-gradient(180deg, #020817, #091a35 53%, #020713);
+}
+
+#scene {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.vignette {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 35%,
+    rgba(0,4,16,.48) 100%
+  );
+}
+
+#startBtn {
+  position: fixed;
+  z-index: 10;
+  top: max(8%, env(safe-area-inset-top));
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: calc(100vw - 28px);
+  padding: 14px 22px;
+  border: 1px solid rgba(170,211,255,.82);
+  border-radius: 999px;
+  color: #f6f9ff;
+  background: rgba(12,34,75,.52);
+  font-size: clamp(14px, 3.8vw, 18px);
+  white-space: nowrap;
+  box-shadow:
+    0 0 25px rgba(52,137,255,.28),
+    inset 0 0 18px rgba(100,170,255,.1);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  animation: buttonGlow 2.4s ease-out infinite;
+  cursor: pointer;
+  transition: opacity .6s ease;
+}
+
+#startBtn.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+@keyframes buttonGlow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(70,145,255,.38),
+                0 0 24px rgba(50,135,255,.24);
+  }
+  75% {
+    box-shadow: 0 0 0 13px rgba(70,145,255,0),
+                0 0 32px rgba(50,135,255,.32);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(70,145,255,0),
+                0 0 24px rgba(50,135,255,.24);
+  }
+}
+
+/* Mesaj */
+
+#textBox {
+  position: fixed;
+  z-index: 5;
+  left: 50%;
+  bottom: max(9%, env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  width: min(92vw, 760px);
+  text-align: center;
+  pointer-events: none;
+  padding: 0 8px;
+}
+
+.message {
+  opacity: 0;
+  transform: translateY(18px);
+  font-size: clamp(23px, 5.6vw, 39px);
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: -.035em;
+  color: #edf6ff;
+  text-shadow:
+    0 0 18px rgba(75,150,255,.8),
+    0 2px 16px #020817;
+}
+
+.heart-divider {
+  margin: 14px auto 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  width: min(250px, 68vw);
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.heart-divider::before,
+.heart-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #85c4ff);
+  box-shadow: 0 0 9px #398bff;
+}
+
+.heart-divider::after {
+  transform: rotate(180deg);
+}
+
+.heart-symbol {
+  color: #c4e7ff;
+  font-size: 25px;
+  text-shadow: 0 0 15px #168bff;
+}
+
+.reveal .message {
+  animation: appear 1.5s .3s cubic-bezier(.2,.7,.2,1) forwards;
+}
+
+.reveal .heart-divider {
+  animation: appear 1s 1.35s ease forwards;
+}
+
+@keyframes appear {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-height: 650px) {
+  #startBtn {
+    top: max(4%, env(safe-area-inset-top));
+    padding: 11px 17px;
+  }
+
+  #textBox {
+    bottom: max(4%, env(safe-area-inset-bottom));
+  }
+
+  .message {
+    font-size: clamp(20px, 4.8vw, 30px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #startBtn { animation: none; }
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="scene" aria-hidden="true"></canvas>
+<div class="vignette"></div>
+
+<button id="startBtn">
+  ♡ &nbsp; Sürprizi Görmek İçin Dokun
+</button>
+
+<div id="textBox">
+  <p class="message">
+    Seni çok seviyorum, sen benim için en güzel şeysin balım ❤️
+  </p>
+  <div class="heart-divider">
+    <span class="heart-symbol">♡</span>
+  </div>
+</div>
+
+<audio id="sfx" preload="auto">
+  <source
+    src="https://assets.mixkit.co/sfx/preview/mixkit-cinematic-deep-impact-peaking-2977.mp3"
+    type="audio/mpeg">
+</audio>
+
+<script>
+(() => {
+  const canvas = document.getElementById("scene");
+  const ctx = canvas.getContext("2d", { alpha: true });
+  const startBtn = document.getElementById("startBtn");
+  const textBox = document.getElementById("textBox");
+  const sound = document.getElementById("sfx");
+
+  const reduceMotion =
+    matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  let W = 0, H = 0, dpr = 1;
+  let shards = [], stars = [], dust = [];
+  let started = false, startTime = 0, raf = 0;
+
+  const assemblyDuration = reduceMotion ? 1 : 4400;
+
+  const palette = [
+    [35,104,220], [53,132,255], [105,181,255],
+    [179,222,255], [24,68,151], [224,245,255],
+    [64,151,255]
+  ];
+
+  // Kalp biçimini matematiksel olarak oluşturur.
+  function insideHeart(x, y) {
+    const a = x*x + y*y - 1;
+    return a*a*a - x*x*y*y*y <= 0;
+  }
+
+  function sampleHeart() {
+    let x, y;
+    do {
+      x = Math.random() * 2.5 - 1.25;
+      y = Math.random() * 2.5 - 1.25;
+    } while (!insideHeart(x, y));
+
+    return { x, y };
+  }
+
+  function scaleForHeart() {
+    return Math.min(W * 0.36, H * 0.255);
+  }
+
+  function heartTarget(nx, ny, depth = 0) {
+    const s = scaleForHeart();
+
+    return {
+      x: W * .5 + nx * s,
+      y: H * .455 - ny * s - s * .13 + depth
+    };
+  }
+
+  function buildScene() {
+    shards = [];
+
+    // Mobil cihazlarda parçacık sayısını sınırlandır.
+    const count = Math.min(
+      440,
+      Math.max(240, Math.floor(W * H / 2600))
+    );
+
+    const s = scaleForHeart();
+
+    for (let i = 0; i < count; i++) {
+      const point = sampleHeart();
+
+      const target = heartTarget(
+        point.x,
+        point.y,
+        (Math.random() - .5) * s * .09
+      );
+
+      const a = Math.random() * Math.PI * 2;
+      const distance = Math.max(W, H) *
+        (.85 + Math.random() * .75);
+
+      const color =
+        palette[Math.floor(Math.random() * palette.length)];
+
+      const size = Math.random() < .18
+        ? 2.2 + Math.random() * 3
+        : 3.2 + Math.random() * 5.2;
+
+      shards.push({
+        sx: W / 2 + Math.cos(a) * distance,
+        sy: H / 2 + Math.sin(a) * distance,
+        tx: target.x,
+        ty: target.y,
+        x: 0,
+        y: 0,
+        nx: point.x,
+        ny: point.y,
+        size,
+        angle: Math.random() * Math.PI * 2,
+        spin: (Math.random() - .5) * 1.8,
+        color,
+        alpha: .62 + Math.random() * .38,
+        delay: Math.random() * 1050,
+        facet: Math.random(),
+        depth: Math.random()
+      });
+    }
+
+    stars = Array.from({
+      length: Math.min(110, Math.floor(W * H / 7600))
+    }, () => ({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      r: .25 + Math.random() * 1.35,
+      a: .12 + Math.random() * .5,
+      phase: Math.random() * Math.PI * 2
+    }));
+
+    dust = Array.from({ length: 42 }, () => ({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      vx: (Math.random() - .5) * .22,
+      vy: -.12 - Math.random() * .32,
+      r: .4 + Math.random() * 1.5,
+      a: .2 + Math.random() * .65
+    }));
+  }
+
+  function resize() {
+    W = window.innerWidth;
+    H = window.innerHeight;
+
+    dpr = Math.min(window.devicePixelRatio || 1, 1.6);
+
+    canvas.width = Math.round(W * dpr);
+    canvas.height = Math.round(H * dpr);
+    canvas.style.width = W + "px";
+    canvas.style.height = H + "px";
+
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    buildScene();
+
+    if (!started) renderIdle();
+  }
+
+  function renderIdle() {
+    ctx.clearRect(0, 0, W, H);
+
+    const g = ctx.createRadialGradient(
+      W*.5, H*.45, 0,
+      W*.5, H*.45, Math.min(W,H)*.55
+    );
+
+    g.addColorStop(0, "rgba(25,85,180,.15)");
+    g.addColorStop(1, "rgba(0,0,0,0)");
+
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, W, H);
+
+    for (const st of stars) {
+      ctx.globalAlpha = st.a;
+      ctx.fillStyle = "#b9ddff";
+      ctx.beginPath();
+      ctx.arc(st.x, st.y, st.r, 0, Math.PI*2);
+      ctx.fill();
+    }
+
+    ctx.globalAlpha = 1;
+  }
+
+  function drawBackground(t) {
+    ctx.clearRect(0, 0, W, H);
+
+    const g = ctx.createRadialGradient(
+      W*.5, H*.45, 0,
+      W*.5, H*.45, Math.min(W,H)*.58
+    );
+
+    g.addColorStop(0, "rgba(31,103,224,.19)");
+    g.addColorStop(.5, "rgba(14,54,124,.07)");
+    g.addColorStop(1, "rgba(0,0,0,0)");
+
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, W, H);
+
+    for (const st of stars) {
+      ctx.globalAlpha =
+        st.a * (.72 + .28 * Math.sin(t*.001 + st.phase));
+
+      ctx.fillStyle = "#c8e6ff";
+      ctx.beginPath();
+      ctx.arc(st.x, st.y, st.r, 0, Math.PI*2);
+      ctx.fill();
+    }
+
+    ctx.globalAlpha = 1;
+  }
+
+  function drawHeartGlow(t, progress, beat) {
+    const c = heartTarget(0, 0);
+    const radius = Math.min(W,H) * (.31 * beat);
+    const alpha = .1 + progress * .09;
+
+    const g = ctx.createRadialGradient(
+      c.x, c.y, 0,
+      c.x, c.y, radius
+    );
+
+    g.addColorStop(0, `rgba(44,132,255,${alpha})`);
+    g.addColorStop(.48, `rgba(27,88,205,${alpha*.55})`);
+    g.addColorStop(1, "rgba(0,20,70,0)");
+
+    ctx.fillStyle = g;
+    ctx.fillRect(
+      c.x-radius, c.y-radius,
+      radius*2, radius*2
+    );
+  }
+
+  // Farklı yüzeyler ve yansımalar ile kristal görünümü.
+  function drawShard(p, time, progress, beat) {
+    const r = p.size * (progress >= 1 ? beat : 1);
+    const rgb = p.color;
+
+    ctx.save();
+    ctx.translate(p.x, p.y);
+    ctx.rotate(p.angle);
+
+    ctx.globalAlpha = p.alpha;
+    ctx.shadowBlur = Math.min(12, r * 1.1);
+    ctx.shadowColor = `rgb(${rgb.join(",")})`;
+
+    ctx.beginPath();
+    ctx.moveTo(-r*.85, -r*.48);
+    ctx.lineTo(r*.18, -r*1.05);
+    ctx.lineTo(r*.94, -r*.18);
+    ctx.lineTo(r*.35, r*.88);
+    ctx.lineTo(-r*.7, r*.55);
+    ctx.closePath();
+
+    const grad = ctx.createLinearGradient(-r, -r, r, r);
+    grad.addColorStop(0, "rgba(239,250,255,.98)");
+    grad.addColorStop(.18, `rgba(${rgb.join(",")},.96)`);
+    grad.addColorStop(.55, "rgba(29,81,164,.92)");
+    grad.addColorStop(1, "rgba(3,17,47,.98)");
+
+    ctx.fillStyle = grad;
+    ctx.fill();
+
+    ctx.lineWidth = .65;
+    ctx.strokeStyle = "rgba(211,239,255,.72)";
+    ctx.stroke();
+
+    // İç yüzeydeki ışık yansıması.
+    ctx.beginPath();
+    ctx.moveTo(-r*.85, -r*.48);
+    ctx.lineTo(r*.18, -r*1.05);
+    ctx.lineTo(-r*.08, r*.05);
+    ctx.closePath();
+
+    ctx.fillStyle = "rgba(230,247,255,.28)";
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.moveTo(-r*.08, r*.05);
+    ctx.lineTo(r*.94, -r*.18);
+    ctx.lineTo(r*.35, r*.88);
+    ctx.closePath();
+
+    ctx.fillStyle = "rgba(30,111,255,.19)";
+    ctx.fill();
+
+    ctx.restore();
+  }
+
+  function drawDust(progress) {
+    if (progress < .12) return;
+
+    for (const d of dust) {
+      d.x += d.vx;
+      d.y += d.vy;
+
+      if (d.y < H*.08) {
+        d.y = H*.86;
+        d.x = Math.random() * W;
+      }
+
+      ctx.globalAlpha = d.a * progress;
+      ctx.fillStyle = "#8fc7ff";
+      ctx.shadowBlur = 7;
+      ctx.shadowColor = "#378dff";
+
+      ctx.beginPath();
+      ctx.arc(d.x, d.y, d.r, 0, Math.PI*2);
+      ctx.fill();
+    }
+
+    ctx.globalAlpha = 1;
+    ctx.shadowBlur = 0;
+  }
+
+  function frame(time) {
+    if (!started) return;
+
+    const elapsed = Math.max(0, time - startTime);
+    const progress = Math.min(1, elapsed / assemblyDuration);
+
+    // Hafif çift atım, ardından yumuşak genişleme-daralma.
+    const wave = Math.pow(
+      (Math.sin(time * .0022) + 1) / 2, 14
+    );
+
+    const secondWave = Math.pow(
+      (Math.sin(time * .0022 - .72) + 1) / 2, 18
+    );
+
+    const beat = progress >= 1
+      ? 1 + .025 * wave + .012 * secondWave
+      : 1;
+
+    drawBackground(time);
+    drawHeartGlow(time, progress, beat);
+    drawDust(progress);
+
+    for (const p of shards) {
+      const local = Math.max(0, Math.min(
+        1,
+        (elapsed - p.delay) /
+        Math.max(1, assemblyDuration - p.delay)
+      ));
+
+      // Yumuşak hızlanma ve yavaşlama.
+      const eased = 1 - Math.pow(1-local, 4);
+
+      p.x = p.sx + (p.tx - p.sx) * eased;
+      p.y = p.sy + (p.ty - p.sy) * eased;
+
+      if (progress < 1) {
+        p.angle += p.spin * .009;
+      } else {
+        p.x = p.tx + Math.sin(time*.0008 + p.nx*7) * .35;
+        p.y = p.ty + Math.cos(time*.0009 + p.ny*6) * .35;
+      }
+
+      drawShard(p, time, progress, beat);
+    }
+
+    raf = requestAnimationFrame(frame);
+  }
+
+  function start() {
+    if (started) return;
+    started = true;
+
+    startBtn.classList.add("hidden");
+
+    setTimeout(() => {
+      startBtn.style.display = "none";
+    }, 650);
+
+    // Mobil tarayıcılarda ses, dokunma sonrasında başlatılır.
+    sound.volume = .5;
+
+    const play = sound.play();
+    if (play && play.catch) play.catch(() => {});
+
+    textBox.classList.add("reveal");
+
+    startTime = performance.now();
+    raf = requestAnimationFrame(frame);
+  }
+
+  startBtn.addEventListener("click", start);
+
+  window.addEventListener("resize", resize, {
+    passive: true
+  });
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+      cancelAnimationFrame(raf);
+    } else if (started) {
+      startTime = performance.now() -
+        Math.min(
+          assemblyDuration,
+          performance.now() - startTime
+        );
+
+      raf = requestAnimationFrame(frame);
+    }
+  });
+
+  resize();
+})();
+</script>
+
+</body>
+</html>
